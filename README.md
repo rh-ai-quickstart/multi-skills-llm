@@ -1,4 +1,4 @@
-# [Multi-Skill Customer Support Assistant]
+# Multi-Skill Customer Support Assistant
 
 <!-- CONTRIBUTOR TODO: update title ^^
 
