@@ -37,7 +37,13 @@ A small base model is deployed on a CPU and a large base model is deployed on a 
 The goals achieved include:
 - **Avoids training** a huge "omni-support" LLM and any specialized finetuning
 - **Higher accuracy** of queries
-- **Optimal cost efficiency** to process queries with the appropriate hardware type 
+- **Optimal cost efficiency** to process queries with the appropriate hardware type
+
+### Main features
+- **Multi-skills** - AI assistant handles different types of queries in business use cases for customers.
+- **Dynamic database routing** - Semantic routing determines the type of query to select the vector database to retrieve context from. 
+- **Dynamic model routing** -  Semantic routing determines the complexity of the query to run a smaller LLM on a CPU or larger LLM on a GPU/AI accelerator.
+- **vLLM** - Inference serving engine used for high throughput and memory efficiency on selected models.
 
 ### Architecture diagrams
 
