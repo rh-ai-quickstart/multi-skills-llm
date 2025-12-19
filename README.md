@@ -1,167 +1,101 @@
-# Multi-Skills Customer Support Assistant
+# Multi-Skill Customer Support Assistant
 
-<!-- CONTRIBUTOR TODO: update title ^^
-
-*replace the H1 title above with your quickstart title*
-
-TITLE requirements:
-	* MAX CHAR: 64 
-	* Industry use case, ie: Protect patient data with LLM guardrails
-
-TITLE will be extracted for publication.
-
--- > 
-
-
-
-<!-- CONTRIBUTOR TODO: short description 
-
-*ADD a SHORT DESCRIPTION of your use case between H1 title and next section*
-
-SHORT DESCRIPTION requirements:
-	* MAX CHAR: 160
-	* Describe the INDUSTRY use case 
-
-SHORT DESCRIPTION will be extracted for publication.
-
---> 
-
+A multi-skill customer support assistant for product questions, billing, shipping, and technical support with dynamic routing to databases and hardware.
 
 ## Table of contents
 
-<!-- Table of contents is optional, but recommended. 
-
-REMEMBER: to remove this section if you don't use a TOC.
-
--->
+- [Detailed description](#detailed-description)
+  - [See it in action](#see-it-in-action)
+  - [Architecture diagrams](#architecture-diagrams)
+- [Requirements](#requirements)
+  - [Minimum hardware requirements](#minimum-hardware-requirements)
+  - [Minimum software requirements](#minimum-software-requirements)
+  - [Required user permissions](#required-user-permissions)
+- [Deploy](#deploy)
+  - [Delete](#delete)
+- [References](#references)
+- [Technical details](#technical-details)
+- [Tags](#tags)
 
 ## Detailed description
 
-<!-- CONTRIBUTOR TODO: add detailed description.
+Customer support teams face huge loads in product FAQs, billing, returns and technical questions. Chatbots built with a single generic LLM fail because answers require domain knowledge. Hosting 5 specialized LLMs is expensive, operationally heavy, and not scalable. In addition, how can the appropriate hardware be selected to handle simple versus complex queries?
 
-This section is required. Describe the quickstart use case in more detail. 
+The solution - using dynamic database and model routers. The first semantic router will determine whether the query is simple or complex. A second semantic router will determine the type of query, ranging from the following:
 
-This is not a technical description. This is about the workload. 
+- **Product Q&A** (simple)
+- **Billing and Payments** (simple)
+- **Shipping and Returns** (simple)
+- **Account Info** (simple)
+- **Technical Setup** (complex)
+- **Reported Issues/Triaging** (complex)
 
-Technical description comes later.
+Based on this type of query, the corresponding vector database with specialized knowledge of that specific area will be used for retrieval augmented generation (RAG). This provides context to the original query by modifying the query before inputting into the LLM.
 
--->
+A small base model is deployed on a CPU and a large base model is deployed on a GPU or AI accelerator. vLLM is used as the inference serving engine for optimal performance. Based on the complexity of the query, the modifyed query will be passed to the appropriate hardware.
 
-
-### See it in action 
-
-<!-- 
-
-*This section is optional but recommended*
-
-Arcades are a great way to showcase your quickstart before installation.
-
--->
+The goals achieved include:
+- **Avoids training** a huge "omni-support" LLM and any specialized finetuning
+- **Higher accuracy** of queries
+- **Optimal cost efficiency** to process queries with the appropriate hardware type 
 
 ### Architecture diagrams
 
-<!-- CONTRIBUTOR TODO: add architecture diagram. 
-
-*Section is required. Put images in `docs/images` folder* 
-
---> 
-
+![Architecture Diagram](docs/images/architecture_diagram.png)
 
 ## Requirements
 
-
 ### Minimum hardware requirements 
 
-<!-- CONTRIBUTOR TODO: add minimum hardware requirements
-
-*Section is required.* 
-
-Be as specific as possible. DON'T say "GPU". Be specific.
-
-List minimum hardware requirements.
-
---> 
+- 8+ vCPUs, preferably from 4th Gen Intel® Xeon® Scalable Processors or newer
+- 24+ GiB RAM
+- 1 Intel® Gaudi® AI Accelerator with 8 cards
 
 ### Minimum software requirements
 
-<!-- CONTRIBUTOR TODO: add minimum software requirements
-
-*Section is required.*
-
-Be specific. Don't say "OpenShift AI". Instead, tested with OpenShift AI 2.22
-
-If you know it only works in a specific version, say so. 
-
--->
+- Red Hat OpenShift
+- Red Hat OpenShift AI 2.16+
+- OpenShift CLI (`oc`) - [Download here](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html)
+- Helm CLI (`helm`) - [Download here](https://helm.sh/docs/intro/install/)
 
 ### Required user permissions
 
-<!-- CONTRIBUTOR TODO: add user permissions
-
-*Section is required. Describe the permissions the user will need. Cluster
-admin? Regular user?*
-
---> 
-
+- Standard user. No elevated cluster permissions required
 
 ## Deploy
 
-<!-- CONTRIBUTOR TODO: add installation instructions 
+### Clone the repository
 
-*Section is required. Include the explicit steps needed to deploy your
-quickstart. 
+```bash
+git clone https://github.com/rh-ai-quickstart/multi-skills-llm
+cd multi-skills-llm
+```
 
-Assume user will follow your instructions EXACTLY. 
+### Create the project
 
-If screenshots are included, remember to put them in the
-`docs/images` folder.*
+```bash
+oc new-project multiskill-assistant-demo
+```
 
--->
+### Build and deploy the helm chart
+
+TODO: add steps with *helm dependency build* and *helm install*
+
+TODO: explain the components installed 
+
+## Test
+
+TODO: explain how to access the UI, give sample simple and complex queries of different types, show which hardware is selected, and include screenshots of sample outputs
 
 ### Delete
 
-<!-- CONTRIBUTOR TODO: add uninstall instructions
+To uninstall and delete the project:
 
-*Section required. Include explicit steps to cleanup quickstart.*
-
-Some users may need to reclaim space by removing this quickstart. Make it easy.
-
--->
+```bash
+helm uninstall multiskill-assistant
+oc delete project multiskill-assistant-demo
+```
 
 ## References 
 
-<!-- 
-
-*Section optional.* Remember to remove if do not use.
-
-Include links to supporting information, documentation, or learning materials.
-
---> 
-
-## Technical details
-
-<!-- 
-
-*Section is optional.* 
-
-Here is your chance to share technical details. 
-
-Welcome to add sections as needed. Keep additions as structured and consistent as possible.
-
--->
-
-## Tags
-
-<!-- CONTRIBUTOR TODO: add metadata and tags for publication
-
-TAG requirements: 
-	* Title: max char: 64, describes quickstart (match H1 heading) 
-	* Description: max char: 160, match SHORT DESCRIPTION above
-	* Industry: target industry, ie. Healthcare OR Financial Services
-	* Product: list primary product, ie. OpenShift AI OR OpenShift OR RHEL 
-	* Use case: use case descriptor, ie. security, automation, 
-	* Contributor org: defaults to Red Hat unless partner or community
-	
-Additional MIST tags, populated by web team.
-
--->
+TODO: optional
