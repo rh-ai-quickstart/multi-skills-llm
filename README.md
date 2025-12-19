@@ -60,7 +60,7 @@ The goals achieved include:
 
 ### Required user permissions
 
-- Standard user. No elevated cluster permissions required
+- Standard user. No elevated cluster permissions required.
 
 ## Deploy
 
