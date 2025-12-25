@@ -5,17 +5,19 @@ A multi-skill customer support assistant for product questions, billing, shippin
 ## Table of contents
 
 - [Detailed description](#detailed-description)
-  - [See it in action](#see-it-in-action)
+  - [Main features](#main-features)
   - [Architecture diagrams](#architecture-diagrams)
 - [Requirements](#requirements)
   - [Minimum hardware requirements](#minimum-hardware-requirements)
   - [Minimum software requirements](#minimum-software-requirements)
   - [Required user permissions](#required-user-permissions)
 - [Deploy](#deploy)
-  - [Delete](#delete)
+  - [Clone the repository](#clone-the-repository)
+  - [Create the project](#create-the-project)
+  - [Build and deploy the helm chart](#build-and-deploy-the-helm-chart)
+- [Test](#test)
+- [Delete](#delete)
 - [References](#references)
-- [Technical details](#technical-details)
-- [Tags](#tags)
 
 ## Detailed description
 
@@ -32,7 +34,7 @@ The solution - using dynamic database and model routers. The first semantic rout
 
 Based on this type of query, the corresponding vector database with specialized knowledge of that specific area will be used for retrieval augmented generation (RAG). This provides context to the original query by modifying the query before inputting into the LLM.
 
-A small base model is deployed on a CPU and a large base model is deployed on a GPU or AI accelerator. vLLM is used as the inference serving engine for optimal performance. Based on the complexity of the query, the modifyed query will be passed to the appropriate hardware.
+A small base model is deployed on a CPU and a large base model is deployed on a GPU or AI accelerator. vLLM is used as the inference serving engine for optimal performance. Based on the complexity of the query, the modified query will be passed to the appropriate hardware.
 
 The goals achieved include:
 - **Avoids training** a huge "omni-support" LLM and any specialized finetuning
@@ -93,7 +95,7 @@ TODO: explain the components installed
 
 TODO: explain how to access the UI, give sample simple and complex queries of different types, show which hardware is selected, and include screenshots of sample outputs
 
-### Delete
+## Delete
 
 To uninstall and delete the project:
 

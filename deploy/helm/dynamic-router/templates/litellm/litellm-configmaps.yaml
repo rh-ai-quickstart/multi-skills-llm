@@ -1,0 +1,20 @@
+---
+{{- range $key := .Values.proxy_config_files }}
+{{- $path := printf "litellm-configs/%s" .name }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ regexReplaceAll "_" .name "-" | trimAll ".py" }} 
+data:
+  {{ .name }}: |
+  {{- $.Files.Get $path | nindent 4 -}}
+{{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: base-api
+data:
+  XEON_API_BASE: "http://vllm-xeon-predictor.{{ .Release.Namespace }}.svc.cluster.local:8080/v1/"
+  GAUDI_API_BASE: "http://standard-granite-31-8b-instruct-predictor.ed-modelcar.svc.cluster.local:8080/v1/"
