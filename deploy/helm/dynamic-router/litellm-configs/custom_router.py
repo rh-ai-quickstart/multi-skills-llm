@@ -724,6 +724,89 @@ class TypeBasedComplexRouter(CustomLogger):
     ):
         pass
 
+class ChainedRouter(CustomLogger):
+    """
+    A chained router that first assesses query complexity, then routes to
+    the appropriate type-based router:
+    - simple-xeon -> TypeBasedSimpleRouter (billing, product, shipping, account)
+    - complex-gaudi -> TypeBasedComplexRouter (setup, reported issues)
+    """
+    def __init__(self):
+        self.complexity_router = ComplexityBasedRouter()
+        self.simple_type_router = TypeBasedSimpleRouter()
+        self.complex_type_router = TypeBasedComplexRouter()
+
+    def route_message(self, message: str) -> str:
+        """
+        Chain the routers together:
+        1. First assess complexity (simple-xeon vs complex-gaudi)
+        2. Then route to appropriate type-based router
+        """
+        # Step 1: Assess complexity
+        complexity_result = self.complexity_router.assess_complexity(message)
+        print(f"[ChainedRouter] Complexity assessment: {complexity_result}")
+        
+        # Step 2: Route to appropriate type-based router
+        if complexity_result == "simple-xeon":
+            final_route = self.simple_type_router.assess_query_type(message)
+            print(f"[ChainedRouter] Simple path -> TypeBasedSimpleRouter -> {final_route}")
+        else:  # complex-gaudi
+            final_route = self.complex_type_router.assess_query_type(message)
+            print(f"[ChainedRouter] Complex path -> TypeBasedComplexRouter -> {final_route}")
+        
+        return final_route
+
+    async def async_pre_call_hook(self, user_api_key_dict: UserAPIKeyAuth, cache: DualCache, data: dict, call_type: Literal[
+            "completion",
+            "text_completion", 
+            "embeddings",
+            "image_generation",
+            "moderation",
+            "audio_transcription",
+        ]): 
+        msg = data['messages'][-1]['content']
+        
+        # Use chained routing logic
+        selected_model = self.route_message(msg)
+        
+        data["model"] = selected_model
+        data.setdefault("_router_meta", {})["final_model"] = selected_model
+        print(f"[ChainedRouter] Final model selection: {selected_model}")
+        return data 
+
+    async def async_post_call_failure_hook(
+        self, 
+        request_data: dict,
+        original_exception: Exception, 
+        user_api_key_dict: UserAPIKeyAuth
+    ):
+        print(f"[ChainedRouter] Request failed: {original_exception}")
+
+    async def async_post_call_success_hook(
+        self,
+        data: dict,
+        user_api_key_dict: UserAPIKeyAuth,
+        response,
+    ):
+        pass
+
+    async def async_moderation_hook(
+        self,
+        data: dict,
+        user_api_key_dict: UserAPIKeyAuth,
+        call_type: Literal["completion", "embeddings", "image_generation", "moderation", "audio_transcription"],
+    ):
+        pass
+
+    async def async_post_call_streaming_hook(
+        self,
+        user_api_key_dict: UserAPIKeyAuth,
+        response: str,
+    ):
+        pass
+
+
 proxy_handler_instance = ComplexityBasedRouter()
 proxy_handler_instance_2 = TypeBasedSimpleRouter()
 proxy_handler_instance_3 = TypeBasedComplexRouter()
+proxy_handler_instance_chained = ChainedRouter()
